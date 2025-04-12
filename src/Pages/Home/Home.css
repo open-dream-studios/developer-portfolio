@@ -1,0 +1,75 @@
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  animation: blink 0.7s step-start infinite;
+}
+
+.gradient-background {
+  background: linear-gradient(155deg, #ffffff, #eaf6ff, blue);
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  animation: gradientShift 5s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.gradient-background-next {
+  z-index: -1;
+  background: linear-gradient(155deg, #ffffff, #eaf6ff, blue);
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  animation: gradientShift 5s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/* Slanted gradient motion */
+@keyframes gradientShift {
+  0% {
+    background-position: 20% 20%;
+  }
+  50% {
+    background-position: 35% 35%;
+  }
+  100% {
+    background-position: 20% 20%;
+  }
+}
+
+.gradient-background2 {
+  background: linear-gradient(155deg, white, rgb(80, 80, 255), white);
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  animation: gradientShift2 5s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/* Slanted gradient motion */
+@keyframes gradientShift2 {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 35% 35%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.hide-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
+
+.hide-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body {
+  overscroll-behavior-x: none;
+}
