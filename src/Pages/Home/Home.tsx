@@ -1,6 +1,6 @@
 import { useCurrentThemeStore } from "../../Store/useCurrentThemeStore";
 import { appTheme } from "../../Util/appTheme";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 import { HiMiniPaintBrush } from "react-icons/hi2";
 import { FaLaptopCode } from "react-icons/fa6";
 import "./Home.css";
@@ -35,38 +35,59 @@ import { RiNextjsFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { MdOutlineMobileFriendly } from "react-icons/md";
 import { MdOutlineWeb } from "react-icons/md";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { FaSquareWebAwesome } from "react-icons/fa6";
 
-// const StarCursorWrapper = ({ children }: { children: any }) => {
-//   const [pos, setPos] = useState({ x: 0, y: 0 });
+const ProjectItem = ({ project, index }: { project: any; index: number }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, {
+    once: true,
+    margin: "-200px 0px",
+  });
 
-//   useEffect(() => {
-//     const move = (e: MouseEvent) => {
-//       setPos({ x: e.clientX, y: e.clientY });
-//     };
-//     window.addEventListener("mousemove", move);
-//     return () => window.removeEventListener("mousemove", move);
-//   }, []);
+  const slideX = index % 2 === 0 ? 50 : -50;
+  return (
+    <a
+      ref={ref}
+      key={index}
+      href={project.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`hover:opacity-[70%] group flex ${
+        index % 2 !== 0 ? "flex-row-reverse" : ""
+      }  transition-all duration-500 ease-in-out px-[30px] py-[10px] md:py-[15px] lg:py-[30px] cursor-pointer`}
+    >
+      <motion.div
+        initial={{ opacity: 0, x: slideX }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-[60%] md:w-[47%] overflow-hidden rounded-xl"
+      >
+        <img
+          src={project.imageUrl}
+          alt={project.title}
+          className="w-full h-auto object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+        />
+      </motion.div>
 
-//   return (
-//     <div style={{ cursor: "none" }}>
-//       {children}
-//       <div
-//         style={{
-//           position: "fixed",
-//           left: pos.x,
-//           top: pos.y,
-//           transform: "translate(-50%, -50%)",
-//           pointerEvents: "none",
-//           fontSize: "24px",
-//           color: "gold",
-//           zIndex: 9999,
-//         }}
-//       >
-//         <PointerIcon right={false} />
-//       </div>
-//     </div>
-//   );
-// };
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
+        className="w-[40%] md:w-[53%] flex flex-col justify-center items-start pl-[20px] md:pl-[30px] lg:pl-[40px] xl:pl-[50px] text-left"
+      >
+        <div className={`${index % 2 === 0 ? "pl-[20px]" : ""} pr-[20px]`}>
+          <p className="font-[700] text-[22px] sm:text-[25px] md:text-[24px] lg:text-[29px] leading-[26px]">
+            {project.title}
+          </p>
+          <p className="mt-[12px] font-[300] text-[16px] sm:text-[18px] md:text-[17px] lg:text-[19px] leading-[25px]">
+            {project.subTitle}
+          </p>
+        </div>
+      </motion.div>
+    </a>
+  );
+};
 
 const Home = () => {
   const currentTheme = useCurrentThemeStore((state) => state.currentTheme);
@@ -158,17 +179,24 @@ const Home = () => {
       if (newPageTriggered) return;
       if (section7Ref.current && section6Ref.current) {
         const scrollY = window.scrollY;
-        if (scrollY < section6Ref.current.offsetTop && scrollToSection !== 0) {
+        if (
+          scrollY < section6Ref.current.offsetTop - window.innerHeight &&
+          scrollToSection !== 0
+        ) {
           setScrollToSection(0);
         }
         if (
-          scrollY > section6Ref.current.offsetTop &&
-          scrollY < section7Ref.current.offsetTop &&
+          scrollY > section6Ref.current.offsetTop - 0.5 * window.innerHeight &&
+          scrollY < section7Ref.current.offsetTop - 0.5 * window.innerHeight &&
           scrollToSection !== 1
         ) {
           setScrollToSection(1);
         }
-        if (scrollY > section7Ref.current.offsetTop && scrollToSection !== 2) {
+        // console.log()
+        if (
+          scrollY > section7Ref.current.offsetTop - 0.5 * window.innerHeight &&
+          scrollToSection !== 2
+        ) {
           setScrollToSection(2);
         }
       }
@@ -192,15 +220,15 @@ const Home = () => {
     } else if (scrollToSectionRef.current === 1 && section6Ref.current) {
       smoothScrollTo(
         windowWidth > 768
-          ? section6Ref.current.offsetTop - 30
-          : section6Ref.current.offsetTop - 70,
+          ? section6Ref.current.offsetTop - 130
+          : section6Ref.current.offsetTop - 180,
         1000
       );
     } else if (scrollToSectionRef.current === 2 && section7Ref.current) {
       smoothScrollTo(
         windowWidth > 768
           ? section7Ref.current.offsetTop
-          : section7Ref.current.offsetTop - 60,
+          : section7Ref.current.offsetTop - 80,
         1000
       );
     }
@@ -220,6 +248,10 @@ const Home = () => {
   const controls3 = useAnimation();
   const controls4 = useAnimation();
   const controls5 = useAnimation();
+
+  const mySites = useRef<HTMLDivElement>(null);
+  const projectsSection = useRef<HTMLDivElement>(null);
+  const myProcess = useRef<HTMLDivElement>(null);
 
   // SECTION 2
   const [currentSection, setCurrentSection] = useState(0);
@@ -277,13 +309,13 @@ const Home = () => {
           const checkpoint2 =
             section2Ref.current.offsetTop - window.innerHeight + 100;
           const checkpoint3 =
-            section3Ref.current.offsetTop - window.innerHeight + 100;
+            section3Ref.current.offsetTop - 0.5 * window.innerHeight;
           const checkpoint4 =
-            section4Ref.current.offsetTop - window.innerHeight + 100;
+            section4Ref.current.offsetTop - window.innerHeight + 300;
           const checkpoint5 =
-            section5Ref.current.offsetTop - window.innerHeight + 100;
+            section5Ref.current.offsetTop - window.innerHeight + 0;
           const checkpoint6 =
-            section6Ref.current.offsetTop - window.innerHeight + 100;
+            section6Ref.current.offsetTop - window.innerHeight - 170;
 
           if (scrollY < checkpoint2 && currentSectionRef.current !== 0) {
             setCurrentSection(0);
@@ -345,8 +377,40 @@ const Home = () => {
     windowWidthRef.current = windowWidth;
   }, [windowWidth]);
 
+  const [mySitesOpacity, setMySitesOpacity] = useState(0);
+  const [myProcessOpacity, setMyProcessOpacity] = useState(0);
+
   useEffect(() => {
     const handleScroll = () => {
+      if (myProcess.current) {
+        const scrollY = window.scrollY;
+        const checkpoint =
+          myProcess.current.offsetTop - window.innerHeight + 170;
+
+        if (scrollY < checkpoint && s3Opacity1 !== 0) {
+          setMyProcessOpacity(0);
+        } else if (scrollY >= checkpoint + 100 && s3Opacity1 !== 1) {
+          setMyProcessOpacity(1);
+        } else {
+          const progress = (scrollY - checkpoint) / 100;
+          setMyProcessOpacity(progress);
+        }
+      }
+
+      if (mySites.current) {
+        const scrollY = window.scrollY;
+        const checkpoint = mySites.current.offsetTop - window.innerHeight + 170;
+
+        if (scrollY < checkpoint && s3Opacity1 !== 0) {
+          setMySitesOpacity(0);
+        } else if (scrollY >= checkpoint + 100 && s3Opacity1 !== 1) {
+          setMySitesOpacity(1);
+        } else {
+          const progress = (scrollY - checkpoint) / 100;
+          setMySitesOpacity(progress);
+        }
+      }
+
       if (!section2FixedBoxParent.current || !section2FixedBox.current) return;
       const scrollY = window.scrollY;
       const top =
@@ -358,7 +422,7 @@ const Home = () => {
         section2fixedRef.current = false;
         el.style.position = "relative";
         el.style.top = "auto";
-        el.style.marginLeft = "0";
+        el.style.marginLeft = "0px";
       } else if (scrollY >= top && !section2fixedRef.current) {
         section2fixedRef.current = true;
         el.style.position = "fixed";
@@ -406,10 +470,11 @@ const Home = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (!myProcess.current) return;
       const scrollY = window.scrollY;
-      const halfScreen = window.innerHeight / 3.2;
+      const checkpoint = myProcess.current.offsetTop - window.innerHeight + 500;
 
-      if (scrollY > halfScreen + 20 && !hasReachedHalf) {
+      if (scrollY > checkpoint && !hasReachedHalf) {
         setHasReachedHalf(true);
         if (!triggerAnimation1) setTriggerAnimation1(true);
         setTimeout(() => {
@@ -423,7 +488,7 @@ const Home = () => {
             translateX: 0,
             transition: {
               duration: 0.4,
-              delay: triggerAnimation1Ref.current ? 0.5 : 0.5,
+              delay: 0.6,
             },
           });
           controls3.start({
@@ -431,7 +496,7 @@ const Home = () => {
             translateX: 0,
             transition: {
               duration: 0.4,
-              delay: triggerAnimation1Ref.current ? 0.6 : 0.6,
+              delay: 1,
             },
           });
           controls4.start({
@@ -439,7 +504,7 @@ const Home = () => {
             translateX: 0,
             transition: {
               duration: 0.4,
-              delay: triggerAnimation1Ref.current ? 0.7 : 0.7,
+              delay: 1.4,
             },
           });
           controls5.start({
@@ -447,12 +512,12 @@ const Home = () => {
             translateY: 0,
             transition: {
               duration: 0.4,
-              delay: triggerAnimation1Ref.current ? 0.8 : 0.8,
+              delay: 1.8,
             },
           });
           triggerAnimation1Ref.current = true;
         }, 100);
-      } else if (scrollY < halfScreen - 20 && hasReachedHalf) {
+      } else if (scrollY < checkpoint - 20 && hasReachedHalf) {
         setHasReachedHalf(false);
         controls.start({
           opacity: 0,
@@ -796,7 +861,7 @@ const Home = () => {
       color3: "#C9E7FF",
       color4: "white",
       image1:
-        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-04-11-22-44-37-435--js_4.webp",
+        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-06-26-16-10-34-732--Screenshot_2025_06_26_at_4_10_27_PM.webp",
       image2:
         "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-04-11-22-44-37-435--js_2.webp",
       image3:
@@ -929,10 +994,46 @@ const Home = () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
+  const topProjects = [
+    {
+      link: "https://mikaelareuben.com",
+      imageUrl:
+        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-06-26-15-45-13-840--Screenshot_2025_06_26_at_3_44_38_PM.webp",
+
+      title: "Mikaela Reuben",
+      subTitle: "Culinary nutritionist offering recipes, wellness coaching, and private chef services",
+    },
+    {
+      link: "https://jessshulmanportfolio.com",
+      imageUrl:
+        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-04-11-22-44-37-435--js_4.webp",
+      title: "Jess Shulman Portfolio",
+      subTitle: "Creative designer and photographer working with small businesses and brands in Long Island, NY",
+    },
+    {
+      link: "https://tannyspaacquisitions.com",
+      imageUrl:
+        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-06-26-15-47-32-526--Screenshot_2025_06_26_at_3_47_25_PM.webp",
+      title: "Tanny Spa Acquisitions",
+      subTitle: "Rochester based company offering spa repair services and selling refurbished hot tubs",
+    },
+    {
+      link: "https://kellystevensphotography.com",
+      imageUrl:
+        "https://raw.githubusercontent.com/open-dream-studios/jg-portfolio/refs/heads/main/images/2025-06-26-16-04-15-798--Screenshot_2025_06_26_at_4_03_44_PM.webp",
+      title: "Kelly Stevens Photography",
+      subTitle: "Boston wedding photographer focused on film-inspired, natural storytelling",
+    },
+  ];
+
   return (
     <div className="flex flex-col" ref={homeRef}>
       {/* Background */}
-      <div className="z-[300] absolute w-[100vw] md:w-[calc(100vw-125px-14vw)] h-[200vh] min-h-[1400px] flex flex-col">
+      <div className="z-[300] absolute w-[100vw] md:w-[calc(100vw-125px-14vw)] h-[400vh] min-h-[1400px] flex flex-col">
+        <div className="w-[100%] h-[100vh] min-h-[700px] gradient-background" />
+        <div className="w-[100%] h-[100vh] min-h-[700px] gradient-background rotate-x-180" />
+        {/* <div className="absolute bottom-[200vh] left-0 w-[100%] h-[400px] bg-gradient-to-b from-transparent to-white" /> */}
+
         <div className="w-[100%] h-[100vh] min-h-[700px] gradient-background" />
         <div className="w-[100%] h-[100vh] min-h-[700px] gradient-background rotate-x-180" />
         <div className="absolute bottom-0 left-0 w-[100%] h-[400px] bg-gradient-to-b from-transparent to-white" />
@@ -1070,7 +1171,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, ease: "easeInOut" }}
-          className="flex flex-row mt-[4px] sm:mt-[14px] md:mt-[10px] lg:mt-[25px] xl:mt-[34px] h-[59px] pl-[60px]"
+          className="flex flex-row mt-[4px] sm:mt-[14px] md:mt-[10px] lg:mt-[25px] xl:mt-[34px] h-[60px] pl-[60px]"
         >
           <p className="text-[20px] sm:text-[21px] md:text-[21px] lg:text-[22px] xl:text-[25px] text-[#888] mr-[20px] leading-[58px] font-[300]">
             02
@@ -1222,18 +1323,18 @@ const Home = () => {
             className="relative w-[200px] h-[47px] flex items-end hover:scale-[1.05] cursor-pointer"
             style={{ transition: "scale 0.3s ease-in-out" }}
             onClick={() => {
-              if (section2Ref.current) {
+              if (projectsSection.current) {
                 smoothScrollTo(
                   window.innerWidth > 768
-                    ? section2Ref.current.offsetTop - 165
-                    : section2Ref.current.offsetTop - 250,
+                    ? projectsSection.current.offsetTop - 20
+                    : projectsSection.current.offsetTop - 90,
                   1000
                 );
               }
             }}
           >
-            <p className="absolute left-[25px] h-full flex items-center font-[300] text-[20px]">
-              Learn more
+            <p className="absolute left-[0px] h-full flex items-center font-[300] text-[20px]">
+              See My Work
             </p>
             <motion.div
               className="absolute left-[133px] rounded-[5px] flex flex-col items-center"
@@ -1269,7 +1370,7 @@ const Home = () => {
             }}
             transition={{
               duration: 4,
-              times: [0, 0.25, 0.75, 1],
+              times: [0, 0.25, 0.8, 1],
               ease: "easeInOut",
               repeat: Infinity,
               delay: 7.1,
@@ -1295,7 +1396,7 @@ const Home = () => {
             }}
             transition={{
               duration: 4,
-              times: [0, 0.25, 0.75, 1],
+              times: [0, 0.25, 0.8, 1],
               ease: "easeInOut",
               repeat: Infinity,
               delay: 10.3,
@@ -1312,6 +1413,46 @@ const Home = () => {
               src={computerImages[indexB]}
             />
           </motion.div>
+        </div>
+      </div>
+
+      <div
+        ref={mySites}
+        style={{ opacity: mySitesOpacity }}
+        className="w-[100%] h-[90px] relative z-[301] mt-[100px]"
+      >
+        <div className="items-center flex flex-row gap-[12px] justify-center w-[100%]">
+          <p className="text-center font-[600] text-[42px] leading-[42px] ">
+            Explore My Sites
+          </p>
+          <FaSquareWebAwesome
+            style={{ color: appTheme[currentTheme].app_color_1 }}
+            className="z-[401] mt-[4px] w-[42px] h-[42px]"
+          />
+        </div>
+      </div>
+
+      <div
+        ref={projectsSection}
+        className="flex justify-center w-full relative z-[301] h-auto"
+      >
+        <div className="max-w-[1000px]">
+          {topProjects.map((project: any, index: number) => (
+            <ProjectItem key={index} project={project} index={index} />
+          ))}
+        </div>
+      </div>
+
+      <div
+        ref={myProcess}
+        style={{ opacity: myProcessOpacity }}
+        className="w-[100%] h-[98px] relative z-[301] mt-[100px]"
+      >
+        <div className="items-center flex flex-row gap-[12px] justify-center w-[100%]">
+          <p className="text-center font-[700] text-[42px] leading-[42px] ">
+            From Start to Finish
+          </p>
+          <FaMagnifyingGlass className="mt-[1px] z-[401] w-[30px] h-[30px]" />
         </div>
       </div>
 
@@ -1503,7 +1644,7 @@ const Home = () => {
       {/* Section 2 - Messages */}
       <div
         ref={section2Ref}
-        className="z-[301] relative w-[100vw] md:w-[calc(100vw-125px-14vw)] h-[auto] mt-[86px]"
+        className="z-[301] relative w-[100vw] md:w-[calc(100vw-125px-14vw)] h-[auto] mt-[86px] overflow-hidden"
       >
         <motion.div
           initial={{ opacity: 0, translateX: "-60px" }}
@@ -1524,7 +1665,7 @@ const Home = () => {
               }}
             >
               <div className="bg-white mb-[2.5px] w-full rounded-[7px] px-[30px] py-[20px]">
-                I need a website for my business, Furniro
+                Hi Joseph, I need a website for my business.
                 <br />
                 We specialize in handcrafted furniture and home living
                 essentials, using premium Italian fabrics and materials to
@@ -1535,7 +1676,7 @@ const Home = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, translateX: triggerAnimation1 ? "60px" : 0 }}
+          initial={{ opacity: 0, translateX: "60px" }}
           animate={triggerAnimation1 ? controls3 : ""}
           style={{ position: "relative" }}
         >
@@ -1681,7 +1822,7 @@ const Home = () => {
           ref={section3FixedBoxParent}
           className="mt-[40px] h-[290px] w-[100%] flex flex-col items-center relative"
         >
-          <div className="absolute z-[401] max-[400px]:w-[300px] w-[380px] sm:w-[500px] h-[140px] bg-[#eee] rounded-[6px] py-[15px] px-[16px]">
+          <div className="absolute z-[401] max-[400px]:w-[300px] w-[380px] sm:w-[500px] h-[140px] bg-[#FFF] shadow-lg rounded-[6px] py-[15px] px-[16px]">
             <MdCenterFocusStrong
               className="w-[26px] h-[26px]"
               style={{ color: appTheme[currentTheme].app_color_1 }}
@@ -1696,7 +1837,7 @@ const Home = () => {
           </div>
           <div
             ref={section3FixedBox}
-            className="z-[402] max-[400px]:w-[300px] w-[380px] sm:w-[500px] h-[140px] bg-[#eee] rounded-[6px] py-[15px] px-[16px]"
+            className="z-[402] max-[400px]:w-[300px] w-[380px] sm:w-[500px] h-[140px] bg-[#FFF] shadow-lg rounded-[6px] py-[15px] px-[16px]"
           >
             <FaStarHalfAlt
               className="w-[24px] h-[24px]"
@@ -1716,7 +1857,7 @@ const Home = () => {
       {/* Section 4 */}
       <div
         ref={section4Ref}
-        className="relative z-[301] mt-[80px] w-[100vw] md:w-[calc(100vw-125px-14vw)]"
+        className="relative z-[301] mt-[80px] w-[100vw] overflow-hidden md:w-[calc(100vw-125px-14vw)]"
       >
         <div className="hidden lg:flex flex-col absolute top-0 left-[66.5%] z-[402] w-[21%]">
           <div
@@ -1724,7 +1865,7 @@ const Home = () => {
               opacity: s4Opacity1,
               transform: `translateY(${30 + s4Opacity1 * -30}px)`,
             }}
-            className="bg-[#eee] rounded-[6px] w-[100%] py-[15px] px-[16px]"
+            className="bg-[#FFF] shadow-lg rounded-[6px] w-[100%] py-[15px] px-[16px]"
           >
             <MdOutlineWeb
               className="w-[24px] h-[24px]"
@@ -1743,7 +1884,7 @@ const Home = () => {
               opacity: s4Opacity2,
               transform: `translateY(${30 + s4Opacity2 * -30}px)`,
             }}
-            className="mt-[10px] bg-[#eee] rounded-[6px] w-[100%] py-[15px] px-[16px]"
+            className="mt-[10px] bg-[#FFF] shadow-lg rounded-[6px] w-[100%] py-[15px] px-[16px]"
           >
             <MdOutlineMobileFriendly
               className="w-[24px] h-[24px]"
@@ -1824,9 +1965,9 @@ const Home = () => {
         ref={section5Ref}
         className="relative z-[301] mt-[140px] w-[100vw] md:w-[calc(100vw-125px-14vw)]"
       >
-        <div className="w-[100%] px-[8%] flex flex-col gap-[32px] lg:gap-[20px]">
+        <div className="w-[100%] px-[8%] flex flex-col gap-[70px] md:gap-[80px] lg:gap-[40px]">
           <div className="flex flex-col lg:flex-row items-center gap-[30px]">
-            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-0">
+            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-[3px]">
               <div
                 className="w-[40px] h-[40px] relative"
                 style={{ color: appTheme[currentTheme].app_color_1 }}
@@ -1849,17 +1990,18 @@ const Home = () => {
             ></div>
             <p
               style={{ opacity: s5Opacity1 }}
-              className="font-[300] text-[23px] leading-[25px] flex-1"
+              className="font-[300] text-[23px] leading-[28px] flex-1"
             >
-              Tell me about your project, the cost will depend on the time
-              needed. For example, you should expect between $1500 and $2500 for
-              a showcase site. For larger projects, the rate will be based on
-              the time required. I will then send you a quote.
+              I'll give you a quote up front, and stick to that price based on
+              the scope we agree on. My base price is $1000-$1500, which
+              guarantees a polished site within just a few days. Once we
+              finalize the design and I've created the site, I'll thoroughly
+              test it and make final adjustments according to your wishes.
             </p>
           </div>
 
           <div className="flex flex-col lg:flex-row items-center gap-[30px]">
-            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-0">
+            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-[4px]">
               <div
                 className="relative w-[33px] h-[33px] rounded-[3px] mr-[2px]"
                 style={{ backgroundColor: appTheme[currentTheme].app_color_1 }}
@@ -1880,16 +2022,17 @@ const Home = () => {
             ></div>
             <p
               style={{ opacity: s5Opacity2 }}
-              className="font-[300] text-[23px] leading-[25px] flex-1"
+              className="font-[300] text-[23px] leading-[28px] flex-1"
             >
               You can modify the content using the provided software (CMS)!
-              Training hours are included to teach you how to modify or add
+              <br />
+              I'll show you exactly what you need to do to modify or add
               content.
             </p>
           </div>
 
           <div className="flex flex-col lg:flex-row items-center gap-[30px]">
-            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-0">
+            <div className="flex flex-row lg:flex-col items-center lg:items-start w-[200px] lg:w-[160px] gap-[8px] lg:gap-[3px]">
               <HiMoon
                 className="w-[37px] h-[37px]"
                 style={{ color: appTheme[currentTheme].app_color_1 }}
@@ -1905,10 +2048,10 @@ const Home = () => {
             ></div>
             <p
               style={{ opacity: s5Opacity3 }}
-              className="font-[300] text-[23px] leading-[25px] flex-1"
+              className="font-[300] text-[23px] leading-[28px] flex-1"
             >
-              You can leave the support and update of your content to me, based
-              on a monthly subscription.
+              You can always message me with requests for support and updates
+              for your site.
             </p>
           </div>
         </div>
@@ -1920,7 +2063,7 @@ const Home = () => {
         className="relative z-[301] mt-[140px] w-[100vw] md:w-[calc(100vw-125px-14vw)]"
       >
         <div className="flex flex-row items-center ml-[40px] gap-[7px]">
-          <p className="font-[800] text-[42px]">My best projects</p>
+          <p className="font-[800] text-[42px]">My Portfolio</p>
           <div className="relative">
             <div className="absolute bg-white z-[402] w-[13px] h-[12px] top-0 mt-[-2px] right-[18px]"></div>
             <BsStars className="z-[401] w-[34px] h-[34px] rotate-y-180" />
@@ -2273,24 +2416,26 @@ const Home = () => {
           </div>
           <div className="font-[500] text-[21px]">Boston, MA</div>
           <div className="font-[500] text-[30px] leading-[37px] mt-[45px]">
-            I design and develop websites that are both elegant, intuitive, and
-            accessible.
+            I help businesses bring in more customers with optimized, beautiful
+            websites
           </div>
-          <div className="mt-[20px] text-[23px] leading-[26px] font-[300]">
-            Driven by a deep passion for graphic design and web development, I
-            specialize in harmonizing the logic of code with the aesthetics of
-            design. This ensures effective intervention on all aspects of the
-            project, without intermediaries.
+          <div className="mt-[20px] text-[23px] leading-[29px] font-[300]">
+            Over the years, I’ve helped businesses make huge strides by
+            identifying exactly what they need most-whether that’s a bold new
+            design, seamless UX, a powerful backend, or strategic SEO and
+            marketing. I have a deep love of both art and software engineering,
+            so I excel when I'm able to combine my creative side with my
+            technical skills. My eye for good designs and ability to build out
+            complex web / coding solutions has helped me transform countless
+            clients' online presence with clarity, care, and great impact.
           </div>
           <div className="font-[500] text-[30px] leading-[37px] mt-[45px]">
-            I also specialize in creating your brand image: logo, banner, and
-            much more.
+            Creativity and Performance, Keys To Your Brand's Success
           </div>
-          <div className="mt-[20px] text-[23px] leading-[26px] font-[300]">
-            From a simple idea, a unique brand identity and an exceptional
-            website are created. My clients appreciate my versatility and the
-            quality of my work, forged by significant experience developing
-            professional applications.
+          <div className="mt-[20px] text-[23px] leading-[29px] font-[300]">
+            Clients trust me because I treat their vision like my own, and I
+            execute it perfectly. Send me a message and I guarantee I can help
+            your business grow!
           </div>
         </div>
         <div className="flex flex-col gap-[30px] sm:gap-0 sm:flex-row mt-[40px] mb-[150px] lg:mb-[60px]">

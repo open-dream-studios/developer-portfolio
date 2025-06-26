@@ -12,7 +12,10 @@ import { AiFillInstagram } from "react-icons/ai";
 import { FaLinkedin } from "react-icons/fa";
 import { IoLogoGithub } from "react-icons/io";
 import { FaTiktok } from "react-icons/fa6";
-import { useScrollToStore, useScrollToTriggerStore } from "../../Store/useScrollToStore";
+import {
+  useScrollToStore,
+  useScrollToTriggerStore,
+} from "../../Store/useScrollToStore";
 import { motion } from "framer-motion";
 
 const LeftBar = () => {
@@ -27,7 +30,9 @@ const LeftBar = () => {
 
   const setScrollToSection = useScrollToStore((state) => state.setScrollTo);
   const scrollToSection = useScrollToStore((state) => state.scrollTo);
-  const setScrollToTrigger = useScrollToTriggerStore((state) => state.setScrollTo);
+  const setScrollToTrigger = useScrollToTriggerStore(
+    (state) => state.setScrollTo
+  );
   const scrollToTrigger = useScrollToTriggerStore((state) => state.scrollTo);
 
   useEffect(() => {
@@ -99,11 +104,12 @@ const LeftBar = () => {
             leftBar ? "md:right-0 right-0" : "md:right-0 right-[100%]"
           } w-[calc(125px+14vw)] h-[100vh] min-h-[650px] lg:min-h-[750px] xl:min-h-[850px] top-0 absolute`}
         >
-          <motion.div 
-            initial={{opacity: 0}}
-            animate={{opacity:1}}
-            transition={{duration: 0.6, delay: 0.1}}
-          className="w-full aspect-[1/1] p-[15%]">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="w-full aspect-[1/1] p-[15%]"
+          >
             <div className="w-full aspect-[1/1] rounded-full overflow-hidden">
               <img
                 alt=""
@@ -114,9 +120,15 @@ const LeftBar = () => {
           </motion.div>
 
           <div className="w-[100%] mb-[20px] text-center mt-[-15px]">
-            <p className="font-[500] text-black text-[20px] mb-[5px]">Joseph Goff</p>
-            <p className="font-[300] text-black text-[18px] mb-[4px]">Full-Stack Developer</p>
-            <p className="font-[300] text-[#555] text-[16px] leading-[15px]">Boston, MA</p>
+            <p className="font-[500] text-black text-[20px] mb-[5px]">
+              Joseph Goff
+            </p>
+            <p className="font-[300] text-black text-[18px] mb-[4px]">
+              Full-Stack Developer
+            </p>
+            <p className="font-[300] text-[#555] text-[16px] leading-[15px]">
+              Boston, MA
+            </p>
           </div>
 
           <div className="w-full px-[15%] pt-[20px] flex flex-col gap-[15px]">
@@ -126,8 +138,8 @@ const LeftBar = () => {
                   key={index}
                   onClick={() => {
                     setScrollToSection(index);
-                    const scrollToTriggerCopy = scrollToTrigger + 1
-                    setScrollToTrigger(scrollToTriggerCopy)
+                    const scrollToTriggerCopy = scrollToTrigger + 1;
+                    setScrollToTrigger(scrollToTriggerCopy);
                   }}
                   onMouseEnter={() => setActiveHoveredTab(tab as TabTypes)}
                   onMouseLeave={() => setActiveHoveredTab(null)}
@@ -227,16 +239,20 @@ const LeftBar = () => {
             <div className="flex flex-row h-[45px] w-full justify-center gap-[8px]">
               <AiFillInstagram
                 onClick={() => {
-                  window.location.href =
-                    "https://www.instagram.com/joseph.goff/";
+                  window.open(
+                    "https://www.instagram.com/joseph.goff/",
+                    "_blank"
+                  );
                 }}
                 className="h-full w-auto p-[1px] hover:scale-[1.2] cursor-pointer"
                 style={{ transition: "scale 0.25s ease-in-out" }}
               />
               <FaLinkedin
                 onClick={() => {
-                  window.location.href =
-                    "https://www.linkedin.com/in/joseph-goff-a40b3522b/";
+                  window.open(
+                    "https://www.linkedin.com/in/joseph-goff-a40b3522b/",
+                    "_blank"
+                  );
                 }}
                 className="h-full w-auto p-[3px] hover:scale-[1.2] cursor-pointer"
                 style={{ transition: "scale 0.25s ease-in-out" }}
@@ -244,13 +260,12 @@ const LeftBar = () => {
             </div>
             <div className="flex flex-row h-[45px] w-full justify-center gap-[7px] ml-[-4px]">
               <FaTiktok
-                onClick={() => {}}
                 className="h-full w-auto p-[5px] hover:scale-[1.2] cursor-pointer"
                 style={{ transition: "scale 0.25s ease-in-out" }}
               />
               <IoLogoGithub
                 onClick={() => {
-                  window.location.href = "https://github.com/josephgoff-git";
+                  window.open("https://github.com/josephgoff-git", "_blank")
                 }}
                 className="h-full w-auto p-[2px] ml-[-2px] hover:scale-[1.2] cursor-pointer"
                 style={{ transition: "scale 0.25s ease-in-out" }}
